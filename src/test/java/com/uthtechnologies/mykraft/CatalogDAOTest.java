@@ -75,7 +75,7 @@ public class CatalogDAOTest {
       pt.setTag("tag3");
       prodLine = prodLineRepo.saveAndFlush(prodLine);
       
-      VendorProduct vp = prodLine.newVendorProduct();
+      //VendorProduct vp = prodLine.newVendorProduct();
       
       
     } catch (Exception e) {
