@@ -20,7 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.uthtechnologies.mykraft.dao.entity.ListValue;
 @Repository
-public interface ListValueRepository
+public interface ListValueRepo
     extends JpaRepository<ListValue, Long> {
 
   @Cacheable("CACHE_LIST_VALUE_META")

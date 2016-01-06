@@ -22,6 +22,14 @@ import lombok.Data;
 @Data
 public class DescriptionSupport {
 
+  public DescriptionSupport() {
+    super();
+  }
+  public DescriptionSupport(String descShort, String descLong) {
+    super();
+    this.descShort = descShort;
+    this.descLong = descLong;
+  }
   @Column(name = "DESC_SHORT", length = 255)
   private String descShort;
   @Column(name = "DESC_LONG", length = 4000)

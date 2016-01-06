@@ -23,8 +23,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.uthtechnologies.mykraft.dao.entity.auth.User;
@@ -42,10 +42,10 @@ public class VendorProduct implements Comparable<VendorProduct>{
 
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")
-  private Product product;
-  @OneToOne(fetch = FetchType.LAZY)
+  private ProductLine productLine;
+  @ManyToOne
   @JoinColumn(name = "VEND_ID", referencedColumnName = "USER_ID")
   private User vendor;
   private Boolean active = true;
@@ -59,13 +59,12 @@ public class VendorProduct implements Comparable<VendorProduct>{
    * New specification based on product type
    * @return
    */
-  public VendorProductSpecification newSpecification()
+  public VendorProductSpecification newSpecification(ProductLineSpecification prodLineSpec)
   {
-    VendorProductSpecification spec = new VendorProductSpecification();
+    VendorProductSpecification spec = new VendorProductSpecification(prodLineSpec);
     spec.setProduct(this);
-    ProductSpecification specType = new ProductSpecification();
-    specType.setProduct(getProduct());
-    spec.setSpec(specType);
+    prodLineSpec.setProduct(getProductLine());
+    
     specifications.add(spec);
     return spec;
   }
@@ -87,7 +86,7 @@ public class VendorProduct implements Comparable<VendorProduct>{
   public ProductUpSell newUpSellProduct()
   {
     ProductUpSell cs = new ProductUpSell();
-    cs.setCategory(getProduct().getCategory());
+    cs.setCategory(getProductLine().getCategory());
     cs.setProduct(this);
     return cs;
   }
@@ -98,7 +97,7 @@ public class VendorProduct implements Comparable<VendorProduct>{
   public ProductFeatured newFeaturedProduct()
   {
     ProductFeatured cs = new ProductFeatured();
-    cs.setCategory(getProduct().getCategory());
+    cs.setCategory(getProductLine().getCategory());
     cs.setProduct(this);
     return cs;
   }
@@ -109,7 +108,7 @@ public class VendorProduct implements Comparable<VendorProduct>{
   private AuditSupport audit;
   @Override
   public int compareTo(VendorProduct o) {
-    int prodSpecCompared = this.getProduct().compareTo(o.getProduct());
+    int prodSpecCompared = this.getProductLine().compareTo(o.getProductLine());
     return prodSpecCompared == 0 ? 
         Integer.compare(this.getProdDispOrder(), o.getProdDispOrder())
         : prodSpecCompared;

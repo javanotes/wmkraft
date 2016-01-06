@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: UserRepository.java
+* FILE: ProductRepo.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -14,11 +14,9 @@
 package com.uthtechnologies.mykraft.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import com.uthtechnologies.mykraft.dao.entity.auth.User;
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLine;
 
-  public User findByUserName(String uname);
+public interface ProductRepo extends JpaRepository<ProductLine, Long> {
+
 }

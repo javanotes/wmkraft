@@ -24,6 +24,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -56,14 +58,18 @@ public class OrderDetail {
   }
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @OneToOne
+  
+  @ManyToOne
   @JoinColumn(name = "ORD_SUMM_ID", referencedColumnName = "ID")
   private OrderSummary summId;
+  
   @OneToOne
   @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
   private VendorProduct product;
+  
   @Column(name = "QTY")
   private Integer quantity = 0;
+  
   private ProductPricingSupport pricing = new ProductPricingSupport();
   @OneToMany
   @JoinColumn(name = "ORD_DETL_ID", referencedColumnName = "ID")

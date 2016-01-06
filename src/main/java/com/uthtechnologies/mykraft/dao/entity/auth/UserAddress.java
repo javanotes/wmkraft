@@ -18,7 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.uthtechnologies.mykraft.dao.entity.ListValue;
@@ -44,7 +44,7 @@ public class UserAddress {
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   @Getter@Setter
   private Long id; 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
   @Getter@Setter
   private User user;

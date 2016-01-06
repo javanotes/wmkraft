@@ -31,9 +31,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.uthtechnologies.mykraft.dao.ListValueRepository;
-import com.uthtechnologies.mykraft.dao.UserRepository;
-import com.uthtechnologies.mykraft.dao.UserRoleRepository;
+import com.uthtechnologies.mykraft.dao.ListValueRepo;
+import com.uthtechnologies.mykraft.dao.UserRepo;
+import com.uthtechnologies.mykraft.dao.UserRoleRepo;
 import com.uthtechnologies.mykraft.dao.entity.ListValue;
 import com.uthtechnologies.mykraft.dao.entity.auth.User;
 import com.uthtechnologies.mykraft.dao.entity.auth.UserAddress;
@@ -44,7 +44,7 @@ import com.uthtechnologies.mykraft.dao.entity.auth.UserRole;
 public class ListValueLoader implements CommandLineRunner {
 
   @Autowired
-  private ListValueRepository lvRepo;
+  private ListValueRepo lvRepo;
  
   @Transactional
   @Override
@@ -233,7 +233,7 @@ public class ListValueLoader implements CommandLineRunner {
   }
 
   @Autowired
-  private UserRepository userRepo;
+  private UserRepo userRepo;
   private void createAdminUsers() {
     User user = userRepo.findByUserName("admin");
     if(user == null)
@@ -272,7 +272,7 @@ public class ListValueLoader implements CommandLineRunner {
   }
 
   @Autowired
-  private UserRoleRepository userRoleRepo;
+  private UserRoleRepo userRoleRepo;
   //create different user types by assigning roles to them
   private void createUserRoles() {
     ListValue lv = lvRepo.findByTypeAndName("ROLE", "SYSADMIN");

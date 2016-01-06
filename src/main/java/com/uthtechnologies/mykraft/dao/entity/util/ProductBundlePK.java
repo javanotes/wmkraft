@@ -20,7 +20,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
-import com.uthtechnologies.mykraft.dao.entity.catalog.Product;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLine;
 
 import lombok.Data;
 @Data
@@ -44,5 +44,5 @@ public class ProductBundlePK implements Serializable{
   private Long id;
   @OneToOne
   @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")
-  private Product product;
+  private ProductLine product;
 }

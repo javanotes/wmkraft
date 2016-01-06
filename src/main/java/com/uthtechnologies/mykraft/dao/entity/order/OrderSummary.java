@@ -25,6 +25,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -46,16 +47,20 @@ public class OrderSummary {
   private String confirmationNo;
   @Column(name = "DATE_GEN")
   private Date orderDate;
-  @OneToOne
+  
+  @ManyToOne
   @JoinColumn(name = "CUST_ID", referencedColumnName = "USER_ID")
   private User customer;
   private AuditSupport audit;
+  
   @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
   @JoinColumn(name = "ORD_SUMM_ID", referencedColumnName = "ID")
   private Set<OrderDetail> details = new HashSet<>();
-  @OneToOne
+  
+  @ManyToOne
   @JoinColumn(name = "SHIP_TO", referencedColumnName = "ID")
   private UserAddress shippingAddr;//TODO: all items shipping to same address
+  
   @OneToOne(mappedBy = "orderId")
   private OrderPayment payment;
 }

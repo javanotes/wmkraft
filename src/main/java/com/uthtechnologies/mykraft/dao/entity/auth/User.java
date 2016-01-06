@@ -99,7 +99,7 @@ public class User implements Serializable {
   @Column(name = "last_updated_ts")
   private Date lastUpdated;
   
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne
   @JoinColumn(name = "ROLE_ID", referencedColumnName = "USR_ROLE")
   private UserRole role;
   

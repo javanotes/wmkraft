@@ -16,6 +16,7 @@ package com.uthtechnologies.mykraft.dao.entity.catalog;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,7 +34,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "WMK_CATEGORY_MASTER")
+@Table(name = "WMK_PRODUCT_CATEGORY")
 public class Category {
 
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,7 +45,15 @@ public class Category {
   private AuditSupport audit;
   
   //this can be an expensive fetch
-  @OneToMany(fetch = FetchType.LAZY)
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
   @JoinColumn(name = "CATG_ID", referencedColumnName = "ID")
-  private Set<Product> products = new HashSet<>();
+  private Set<ProductLine> products = new HashSet<>();
+  
+  public ProductLine newProductLine()
+  {
+    ProductLine pl = new ProductLine();
+    pl.setCategory(this);
+    getProducts().add(pl);
+    return pl;
+  }
 }

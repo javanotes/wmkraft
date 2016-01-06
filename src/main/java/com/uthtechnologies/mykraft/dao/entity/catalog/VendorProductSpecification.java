@@ -20,6 +20,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -30,14 +31,22 @@ import lombok.Data;
 @Table(name = "WMK_VENDOR_PRODUCT_SPECS")
 public class VendorProductSpecification {
 
+  
+  VendorProductSpecification() {
+    super();
+  }
+  public VendorProductSpecification(ProductLineSpecification spec) {
+    super();
+    this.spec = spec;
+  }
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
   private VendorProduct product;
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "SPEC_ID", referencedColumnName = "ID")
-  private ProductSpecification spec;
+  private ProductLineSpecification spec;
   @Column(name = "SPEC_DETL", columnDefinition = "MEDIUMTEXT")
   private String descript;
   

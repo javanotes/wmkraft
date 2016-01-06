@@ -57,6 +57,7 @@ public class AddressSupport {
   @OneToOne
   @JoinColumn(name = "ADDR_TYP", referencedColumnName = "ID")
   private ListValue type;
+  
   @Column(name = "ADDR_1")
   private String addrLine1;
   @Column(name = "ADDR_2")

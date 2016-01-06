@@ -24,8 +24,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
@@ -34,33 +34,81 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_PRODUCT_MASTER")
-public class Product implements Comparable<Product>{
+@Table(name = "WMK_PRODUCT_LINES")
+public class ProductLine implements Comparable<ProductLine>{
 
   //if same product to be sold by multiple vendors
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "PROD_TYP_ID")
   private Long id;
-  @OneToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "CATG_ID", referencedColumnName = "ID")
   private Category category;
+  
   @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
   @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")
-  private Set<ProductSpecification> specs = new HashSet<>();
+  private Set<ProductLineSpecification> specs = new HashSet<>();
+  public ProductLineSpecification newProductSpecification()
+  {
+    ProductLineSpecification ps = new ProductLineSpecification();
+    ps.setProduct(this);
+    getSpecs().add(ps);
+    return ps;
+  }
+  
   @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
   @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")  
   private Set<VendorProduct> products = new HashSet<>();
+  public VendorProduct newVendorProduct()
+  {
+    VendorProduct vp = new VendorProduct();
+    vp.setProductLine(this);
+    getProducts().add(vp);
+    return vp;
+  }
+  
   @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
   @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")
   private Set<ProductTag> tags = new HashSet<>();
+  public ProductTag newProductTag()
+  {
+    ProductTag pt = new ProductTag();
+    pt.setProduct(this);
+    getTags().add(pt);
+    return pt;
+  }
+  
   private AuditSupport audit;
   @Column(name = "CATG_DISP_ORDER")
   private Integer catgDispOrder;
   @Column(name = "PROD_TYP_LABEL")
   private String prodTypeLabel;
   @Override
-  public int compareTo(Product o) {
+  public int compareTo(ProductLine o) {
     return Integer.compare(this.getCatgDispOrder(), o.getCatgDispOrder());
+  }
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ProductLine other = (ProductLine) obj;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
+  }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
   }
     
 }

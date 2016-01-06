@@ -21,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -34,7 +35,7 @@ public class OrderFulfillment {
 
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name="ORD_DETL_ID", referencedColumnName = "ID")
   private OrderDetail order;
   

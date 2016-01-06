@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: UserRoleRepository.java
+* FILE: ProductLineRepo.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -13,13 +13,15 @@
 */
 package com.uthtechnologies.mykraft.dao;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.uthtechnologies.mykraft.dao.entity.ListValue;
-import com.uthtechnologies.mykraft.dao.entity.auth.UserRole;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLine;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineSpecification;
 @Repository
-public interface UserRoleRepository extends JpaRepository<UserRole, Integer> {
+public interface ProductLineRepo extends JpaRepository<ProductLine, Long> {
 
-  UserRole findByRole(ListValue role);
+  
 }
