@@ -11,7 +11,7 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao.entity.util;
+package com.uthtechnologies.mykraft.dao.entity.util.id;
 
 import java.io.Serializable;
 

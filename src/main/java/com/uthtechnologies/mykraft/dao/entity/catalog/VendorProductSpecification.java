@@ -19,6 +19,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -28,9 +29,9 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_VENDOR_PRODUCT_SPECS")
+@Table(name = "WMK_VENDOR_PRODUCT_SPECS", indexes = {
+    @Index(name = "idx_VENDOR_PRODUCT_SPEC", columnList = "PROD_ID, SPEC_ID", unique = true)})
 public class VendorProductSpecification {
-
   
   VendorProductSpecification() {
     super();
@@ -49,5 +50,28 @@ public class VendorProductSpecification {
   private ProductLineSpecification spec;
   @Column(name = "SPEC_DETL", columnDefinition = "MEDIUMTEXT")
   private String descript;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    VendorProductSpecification other = (VendorProductSpecification) obj;
+    if (id == null) {
+      //if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
+  }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
+    return result;
+  }
   
 }

@@ -23,6 +23,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -34,7 +35,8 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_PRODUCT_LINES")
+@Table(name = "WMK_PRODUCT_LINES", indexes = {
+    @Index(name = "idx_WMK_ORDER_DETAILS", columnList = "CATG_ID, PROD_TYP", unique = true)})
 public class ProductLine implements Comparable<ProductLine>{
 
   //if same product to be sold by multiple vendors
@@ -81,7 +83,7 @@ public class ProductLine implements Comparable<ProductLine>{
   private AuditSupport audit;
   @Column(name = "CATG_DISP_ORDER")
   private Integer catgDispOrder;
-  @Column(name = "PROD_TYP_LABEL")
+  @Column(name = "PROD_TYP", nullable = false)
   private String prodTypeLabel;
   @Override
   public int compareTo(ProductLine o) {
@@ -97,7 +99,7 @@ public class ProductLine implements Comparable<ProductLine>{
       return false;
     ProductLine other = (ProductLine) obj;
     if (id == null) {
-      if (other.id != null)
+      //if (other.id != null)
         return false;
     } else if (!id.equals(other.id))
       return false;
@@ -107,7 +109,7 @@ public class ProductLine implements Comparable<ProductLine>{
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
     return result;
   }
     

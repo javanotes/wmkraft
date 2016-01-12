@@ -16,12 +16,14 @@ package com.uthtechnologies.mykraft.dao.entity.catalog;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -37,22 +39,55 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_VENDOR_PRODUCT")
+@Table(name = "WMK_VENDOR_PRODUCT", indexes = {
+    @Index(name = "idx_WMK_VENDOR_PRODUCT", columnList = "PROD_TYP_ID, VEND_ID, PROD_LABEL", unique = true)})
 public class VendorProduct implements Comparable<VendorProduct>{
 
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    VendorProduct other = (VendorProduct) obj;
+    if (id == null) {
+      //if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
+    return result;
+  }
+  
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")
   private ProductLine productLine;
+  
+  @Column(name = "PROD_CODE", unique = true, length = 32)
+  private String vendorProdCode;
+  
+  @Column(name = "PROD_LABEL", nullable = false)
+  private String vendorProdLabel;
+  
   @ManyToOne
   @JoinColumn(name = "VEND_ID", referencedColumnName = "USER_ID")
   private User vendor;
   private Boolean active = true;
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+  @JoinColumn(name = "PROD_SPEC_ID", referencedColumnName = "ID")
   private Set<VendorProductSpecification> specifications = new HashSet<>();
-  
+    
   @Column(name = "PROD_DISP_ORDER")
   private Integer prodDispOrder;
   /**

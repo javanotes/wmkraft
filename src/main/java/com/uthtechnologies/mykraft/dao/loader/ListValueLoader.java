@@ -45,7 +45,7 @@ public class ListValueLoader implements CommandLineRunner {
 
   @Autowired
   private ListValueRepo lvRepo;
- 
+  
   @Transactional
   @Override
   public void run(String... args) throws Exception {
@@ -135,7 +135,7 @@ public class ListValueLoader implements CommandLineRunner {
       lv = lvRepo.save(lv);
             
     }
-    
+    //Order fulfillment stages
     lv = lvRepo.findByTypeAndName("ORDERFULFILLSTAGE", "READY_TO_PACK");
     if(lv == null)
     {
@@ -208,6 +208,45 @@ public class ListValueLoader implements CommandLineRunner {
             
     }
     
+    //Approval types
+    lv = lvRepo.findByTypeAndName("APPROVALSTATUS", "SUBMIT");
+    if(lv == null)
+    {
+      lv = new ListValue();
+      lv.setType("APPROVALSTATUS");
+      lv.setName("SUBMIT");
+      lv = lvRepo.save(lv);
+            
+    }
+    lv = lvRepo.findByTypeAndName("APPROVALSTATUS", "REVIEW");
+    if(lv == null)
+    {
+      lv = new ListValue();
+      lv.setType("APPROVALSTATUS");
+      lv.setName("REVIEW");
+      lv = lvRepo.save(lv);
+            
+    }
+    lv = lvRepo.findByTypeAndName("APPROVALSTATUS", "APPROVE");
+    if(lv == null)
+    {
+      lv = new ListValue();
+      lv.setType("APPROVALSTATUS");
+      lv.setName("APPROVE");
+      lv = lvRepo.save(lv);
+            
+    }
+    lv = lvRepo.findByTypeAndName("APPROVALSTATUS", "REJECT");
+    if(lv == null)
+    {
+      lv = new ListValue();
+      lv.setType("APPROVALSTATUS");
+      lv.setName("REJECT");
+      lv = lvRepo.save(lv);
+            
+    }
+    
+    //Address types
     lv = lvRepo.findByTypeAndName("ADDRTYPE", "HOME");
     if(lv == null)
     {

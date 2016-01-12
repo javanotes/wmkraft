@@ -31,10 +31,35 @@ import lombok.Data;
 @Table(name = "WMK_ORDER_PAYMENTS")
 public class OrderPayment {
 
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    OrderPayment other = (OrderPayment) obj;
+    if (id == null) {
+      //if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
+    return result;
+  }
+  
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   @OneToOne
-  @JoinColumn(name = "ORD_SUMM_ID", referencedColumnName = "ID")
+  @JoinColumn(name = "ORD_SUMM_ID", referencedColumnName = "ID", unique = true)
   private OrderSummary orderId;
   @Column(name = "PMT_METH")
   private String pmtMethod;//CASH,CCARD,DCARD,CHEQ,NEFT

@@ -23,8 +23,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -38,9 +38,34 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "WMK_ORDER_DETAILS")
+@Table(name = "WMK_ORDER_DETAILS", indexes = {
+    @Index(name = "idx_WMK_ORDER_DETAILS", columnList = "ORD_SUMM_ID, PROD_ID", unique = true)})
 public class OrderDetail {
 
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    OrderDetail other = (OrderDetail) obj;
+    if (id == null) {
+      //if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
+    return result;
+  }
   OrderDetail()
   {
     
@@ -69,6 +94,9 @@ public class OrderDetail {
   
   @Column(name = "QTY")
   private Integer quantity = 0;
+  
+  @Column(name = "EST_DEL_DT", nullable = false)
+  private Date estDeliveryDate;
   
   private ProductPricingSupport pricing = new ProductPricingSupport();
   @OneToMany

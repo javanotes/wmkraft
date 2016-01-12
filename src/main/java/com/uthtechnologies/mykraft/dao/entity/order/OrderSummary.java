@@ -41,9 +41,34 @@ import lombok.Data;
 @Table(name = "WMK_ORDER_SUMMARY")
 public class OrderSummary {
 
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    OrderSummary other = (OrderSummary) obj;
+    if (id == null) {
+      //if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
+    return result;
+  }
+  
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @Column(name = "CONFIRM_NUM")
+  @Column(name = "CONFIRM_NUM", unique = true)
   private String confirmationNo;
   @Column(name = "DATE_GEN")
   private Date orderDate;

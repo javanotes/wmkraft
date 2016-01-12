@@ -22,6 +22,19 @@ import lombok.Data;
 @Embeddable
 public class ProductCostingSupport {
 
+  public ProductCostingSupport() {
+    super();
+  }
+
+  public ProductCostingSupport(Double taxRate, Double costPrice,
+      Double costOfPkg, Double costOfDelivery) {
+    super();
+    this.taxRate = taxRate;
+    this.costPrice = costPrice;
+    this.costOfPkg = costOfPkg;
+    this.costOfDelivery = costOfDelivery;
+  }
+
   @Column(name = "SUPP_TAX_RATE")  
   private Double taxRate = 0.0;;
   @Column(name = "SUPP_SELL_COST")

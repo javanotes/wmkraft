@@ -52,7 +52,7 @@ public class UserAddress {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
     return result;
   }
   @Override
@@ -65,7 +65,7 @@ public class UserAddress {
       return false;
     UserAddress other = (UserAddress) obj;
     if (id == null) {
-      if (other.id != null)
+      //if (other.id != null)
         return false;
     } else if (!id.equals(other.id))
       return false;
