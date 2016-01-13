@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: ProductTag.java
+* FILE: ProductCrossSale.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -11,31 +11,43 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao.entity.catalog;
+package com.uthtechnologies.mykraft.dao.entity.catalog.xref;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductCategory;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
 
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "WMK_PRODUCT_TAGS", indexes = {
-    @Index(name = "idx_WMK_ORDER_FULFILLMENT", columnList = "PROD_TYP_ID, TAG", unique = true)})
-public class ProductTag {
+@Entity
+@Table(name = "WMK_PRODUCT_FEATURED")
+public class ProductFeatured {
 
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @ManyToOne
-  @JoinColumn(name = "PROD_TYP_ID", referencedColumnName= "PROD_TYP_ID")
-  private ProductLine product;
-  private String tag;
+  @Column(name = "PROMO_MSG", columnDefinition = "TEXT")
+  private String promotionMessage;
+  @Column(name = "SEQ")
+  private int sequence;
+  @OneToOne
+  @JoinColumn(name = "CATG_ID", referencedColumnName = "ID")
+  private ProductCategory category;
+  @OneToOne
+  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
+  private Product product;
+  @OneToOne
+  @JoinColumn(name = "XREF_PROD_ID", referencedColumnName = "ID")
+  private Product relatedProduct;
+  
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -44,7 +56,7 @@ public class ProductTag {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    ProductTag other = (ProductTag) obj;
+    ProductFeatured other = (ProductFeatured) obj;
     if (id == null) {
       //if (other.id != null)
         return false;

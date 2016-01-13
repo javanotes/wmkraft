@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: OrderSummary.java
+* FILE: VendorProduct.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -11,36 +11,36 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao.entity.order;
+package com.uthtechnologies.mykraft.dao.entity.catalog.vendor;
 
-import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.uthtechnologies.mykraft.dao.entity.auth.User;
-import com.uthtechnologies.mykraft.dao.entity.auth.UserAddress;
 import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
+import com.uthtechnologies.mykraft.dao.entity.util.ProductCostingSupport;
+import com.uthtechnologies.mykraft.dao.entity.util.ProductDimensionSupport;
 
 import lombok.Data;
 
-@Data
 @Entity
-@Table(name = "WMK_ORDER_SUMMARY")
-public class OrderSummary {
+@Data
+@Table(name = "WMK_VENDOR_PRODUCT_SKU", indexes = {
+    @Index(name = "idx_WMK_VENDOR_PRODUCT_sku", columnList = "PROD_ID, SKU_TYPE, SKU_ATTR", unique = true)})
+public class ProductSKU{
 
+  public ProductSKU()
+  {
+    
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -49,7 +49,7 @@ public class OrderSummary {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    OrderSummary other = (OrderSummary) obj;
+    ProductSKU other = (ProductSKU) obj;
     if (id == null) {
       //if (other.id != null)
         return false;
@@ -68,23 +68,24 @@ public class OrderSummary {
   
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @Column(name = "CONFIRM_NUM", unique = true)
-  private String confirmationNo;
-  @Column(name = "TIMESTAMP_GEN", nullable = false, columnDefinition = "DATETIME DEFAULT NOW()")
-  private Timestamp orderDate;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
+  private Product product;
+  @Column(name = "SKU_CODE", unique = true, length = 20)
+  private String skuID;
+  @Column(name = "SKU_TYPE", nullable = false)
+  private String skuCode;
+  @Column(name = "SKU_ATTR", nullable = false)
+  private String skuAttrib;
+    
+  private Boolean active = true;
   
-  @ManyToOne
-  @JoinColumn(name = "CUST_ID", referencedColumnName = "USER_ID")
-  private User customer;
+  @Column(name = "SKU_DISP_ORDER")
+  private Integer skuDispOrder;
+  
+  private ProductDimensionSupport dimension;
+  private ProductCostingSupport costing;
+  
   private AuditSupport audit;
   
-  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "summary", orphanRemoval = true)
-  private Set<OrderDetail> details = new HashSet<>();
-  
-  @ManyToOne
-  @JoinColumn(name = "SHIP_TO", referencedColumnName = "ID")
-  private UserAddress shippingAddr;//TODO: all items shipping to same address
-  
-  @OneToOne(mappedBy = "orderId")
-  private OrderPayment payment;
 }

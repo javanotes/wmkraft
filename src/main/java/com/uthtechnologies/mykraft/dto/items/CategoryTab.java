@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: ProductRepo.java
+* FILE: CategoryTab.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -11,12 +11,11 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao;
+package com.uthtechnologies.mykraft.dto.items;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
-import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
+public class CategoryTab {
 
-public interface ProductRepo extends JpaRepository<Product, Long> {
-
+  List<CategoryItem> categories;
 }

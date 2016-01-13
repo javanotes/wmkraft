@@ -11,8 +11,9 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao.entity.catalog;
+package com.uthtechnologies.mykraft.dao.entity.catalog.vendor;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,11 +30,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import com.uthtechnologies.mykraft.dao.entity.auth.User;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLine;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineSpecification;
+import com.uthtechnologies.mykraft.dao.entity.catalog.xref.ProductCrossSell;
+import com.uthtechnologies.mykraft.dao.entity.catalog.xref.ProductFeatured;
+import com.uthtechnologies.mykraft.dao.entity.catalog.xref.ProductUpSell;
 import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
 import com.uthtechnologies.mykraft.dao.entity.util.DescriptionSupport;
-import com.uthtechnologies.mykraft.dao.entity.util.ProductCostingSupport;
-import com.uthtechnologies.mykraft.dao.entity.util.ProductDimensionSupport;
 
 import lombok.Data;
 
@@ -41,7 +49,7 @@ import lombok.Data;
 @Data
 @Table(name = "WMK_VENDOR_PRODUCT", indexes = {
     @Index(name = "idx_WMK_VENDOR_PRODUCT", columnList = "PROD_TYP_ID, VEND_ID, PROD_LABEL", unique = true)})
-public class VendorProduct implements Comparable<VendorProduct>{
+public class Product implements Comparable<Product>{
 
   @Override
   public boolean equals(Object obj) {
@@ -51,7 +59,7 @@ public class VendorProduct implements Comparable<VendorProduct>{
       return false;
     if (getClass() != obj.getClass())
       return false;
-    VendorProduct other = (VendorProduct) obj;
+    Product other = (Product) obj;
     if (id == null) {
       //if (other.id != null)
         return false;
@@ -84,19 +92,41 @@ public class VendorProduct implements Comparable<VendorProduct>{
   @JoinColumn(name = "VEND_ID", referencedColumnName = "USER_ID")
   private User vendor;
   private Boolean active = true;
-  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-  @JoinColumn(name = "PROD_SPEC_ID", referencedColumnName = "ID")
-  private Set<VendorProductSpecification> specifications = new HashSet<>();
+  
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "product", orphanRemoval = true)
+  private Set<ProductSpecification> specifications = new HashSet<>();
+  
+  @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "product", orphanRemoval = true)  
+  private Set<ProductSKU> sku = new HashSet<>();
+  /**
+   * New product sku type
+   * @return
+   */
+  public ProductSKU newSKU(String code, String attrib)
+  {
+    ProductSKU sku = new ProductSKU();
+    sku.setProduct(this);
+    sku.setSkuCode(code);
+    sku.setSkuAttrib(attrib);
     
+    HashCode h = Hashing.md5().newHasher()
+    .putString(getVendorProdCode(), StandardCharsets.UTF_8)
+    .putString(sku.getSkuCode(), StandardCharsets.UTF_8)
+    .putString(sku.getSkuAttrib(), StandardCharsets.UTF_8).hash();
+    sku.setSkuID(StringUtils.leftPad(String.valueOf(h.asLong()), 20, '0'));
+    getSku().add(sku);
+    return sku;
+  }
+  
   @Column(name = "PROD_DISP_ORDER")
   private Integer prodDispOrder;
   /**
    * New specification based on product type
    * @return
    */
-  public VendorProductSpecification newSpecification(ProductLineSpecification prodLineSpec)
+  public ProductSpecification newSpecification(ProductLineSpecification prodLineSpec)
   {
-    VendorProductSpecification spec = new VendorProductSpecification(prodLineSpec);
+    ProductSpecification spec = new ProductSpecification(prodLineSpec);
     spec.setProduct(this);
     prodLineSpec.setProduct(getProductLine());
     
@@ -136,13 +166,12 @@ public class VendorProduct implements Comparable<VendorProduct>{
     cs.setProduct(this);
     return cs;
   }
-  private ProductDimensionSupport dimension;
-  private ProductCostingSupport costing;
+  
   private DescriptionSupport descript;
   
   private AuditSupport audit;
   @Override
-  public int compareTo(VendorProduct o) {
+  public int compareTo(Product o) {
     int prodSpecCompared = this.getProductLine().compareTo(o.getProductLine());
     return prodSpecCompared == 0 ? 
         Integer.compare(this.getProdDispOrder(), o.getProdDispOrder())

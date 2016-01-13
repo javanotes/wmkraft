@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: ProductStock.java
+* FILE: ProductCrossSale.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -11,13 +11,10 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao.entity.catalog;
-
-import java.util.Date;
+package com.uthtechnologies.mykraft.dao.entity.catalog.xref;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,29 +22,31 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductCategory;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
 
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "WMK_PRODUCT_STOCK")
-public class ProductStock {
+@Table(name = "WMK_PRODUCT_UP_SELL")
+public class ProductUpSell {
 
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID", unique = true)
-  private VendorProduct product;
-  
-  @Column(name = "QTY_IN_STOCK")
-  private Integer qtyInStock;
-  @Column(name = "QTY_ORDERED")
-  private Integer qtyOrdered;
-  @Column(name = "EST_ARR_DT")
-  private Date estArrDate;
-  private AuditSupport audit;
-  
+  @Column(name = "PROMO_MSG", columnDefinition = "TEXT")
+  private String promotionMessage;
+  @Column(name = "SEQ")
+  private int sequence;
+  @OneToOne
+  @JoinColumn(name = "CATG_ID", referencedColumnName = "ID")
+  private ProductCategory category;
+  @OneToOne
+  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
+  private Product product;
+  @OneToOne
+  @JoinColumn(name = "XREF_PROD_ID", referencedColumnName = "ID")
+  private Product relatedProduct;
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -56,7 +55,7 @@ public class ProductStock {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    ProductStock other = (ProductStock) obj;
+    ProductUpSell other = (ProductUpSell) obj;
     if (id == null) {
       //if (other.id != null)
         return false;

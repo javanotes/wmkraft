@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: Category.java
+* FILE: VendorProductSpecs.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -11,52 +11,47 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao.entity.catalog;
+package com.uthtechnologies.mykraft.dao.entity.catalog.vendor;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
-import com.uthtechnologies.mykraft.dao.entity.util.DescriptionSupport;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineSpecification;
 
 import lombok.Data;
 
-@Data
 @Entity
-@Table(name = "WMK_PRODUCT_CATEGORY")
-public class Category {
-
-  @Id@GeneratedValue(strategy = GenerationType.AUTO)
-  private Integer id;
-  @Column(name = "CODE", nullable = false, unique = true, length = 64)
-  private String category;
-  private DescriptionSupport descript;
-  private AuditSupport audit;
+@Data
+@Table(name = "WMK_VENDOR_PRODUCT_SPECS", indexes = {
+    @Index(name = "idx_VENDOR_PRODUCT_SPEC", columnList = "PROD_ID, SPEC_ID", unique = true)})
+public class ProductSpecification {
   
-  //this can be an expensive fetch
-  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-  @JoinColumn(name = "CATG_ID", referencedColumnName = "ID")
-  private Set<ProductLine> products = new HashSet<>();
-  
-  public ProductLine newProductLine()
-  {
-    ProductLine pl = new ProductLine();
-    pl.setCategory(this);
-    getProducts().add(pl);
-    return pl;
+  ProductSpecification() {
+    super();
   }
-
+  public ProductSpecification(ProductLineSpecification spec) {
+    super();
+    this.spec = spec;
+  }
+  @Id@GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
+  @ManyToOne
+  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
+  private Product product;
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "SPEC_ID", referencedColumnName = "ID")
+  private ProductLineSpecification spec;
+  @Column(name = "SPEC_DETL", columnDefinition = "MEDIUMTEXT")
+  private String descript;
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -65,7 +60,7 @@ public class Category {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    Category other = (Category) obj;
+    ProductSpecification other = (ProductSpecification) obj;
     if (id == null) {
       //if (other.id != null)
         return false;
@@ -73,7 +68,6 @@ public class Category {
       return false;
     return true;
   }
-
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -81,4 +75,5 @@ public class Category {
     result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
     return result;
   }
+  
 }

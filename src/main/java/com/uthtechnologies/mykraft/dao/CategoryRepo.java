@@ -16,8 +16,8 @@ package com.uthtechnologies.mykraft.dao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.uthtechnologies.mykraft.dao.entity.catalog.Category;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductCategory;
 @Repository
-public interface CategoryRepo extends JpaRepository<Category, Integer> {
+public interface CategoryRepo extends JpaRepository<ProductCategory, Integer> {
 
 }

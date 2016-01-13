@@ -30,7 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.uthtechnologies.mykraft.dao.entity.catalog.VendorProduct;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSKU;
 import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
 import com.uthtechnologies.mykraft.dao.entity.util.ProductPricingSupport;
 
@@ -39,7 +39,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "WMK_ORDER_DETAILS", indexes = {
-    @Index(name = "idx_WMK_ORDER_DETAILS", columnList = "ORD_SUMM_ID, PROD_ID", unique = true)})
+    @Index(name = "idx_WMK_ORDER_DETAILS", columnList = "ORD_SUMM_ID, PROD_SKU_ID", unique = true)})
 public class OrderDetail {
 
   @Override
@@ -75,7 +75,7 @@ public class OrderDetail {
    * @param product
    * @param quantity
    */
-  public OrderDetail(VendorProduct product, Integer quantity)
+  public OrderDetail(ProductSKU product, Integer quantity)
   {
     this.product = product;
     this.quantity = quantity;
@@ -86,11 +86,11 @@ public class OrderDetail {
   
   @ManyToOne
   @JoinColumn(name = "ORD_SUMM_ID", referencedColumnName = "ID")
-  private OrderSummary summId;
+  private OrderSummary summary;
   
   @OneToOne
-  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
-  private VendorProduct product;
+  @JoinColumn(name = "PROD_SKU_ID", referencedColumnName = "ID")
+  private ProductSKU product;
   
   @Column(name = "QTY")
   private Integer quantity = 0;
@@ -99,8 +99,7 @@ public class OrderDetail {
   private Date estDeliveryDate;
   
   private ProductPricingSupport pricing = new ProductPricingSupport();
-  @OneToMany
-  @JoinColumn(name = "ORD_DETL_ID", referencedColumnName = "ID")
+  @OneToMany(mappedBy = "order", orphanRemoval = true)
   private Set<OrderFulfillment> stages = new TreeSet<>(new Comparator<OrderFulfillment>() {
 
     @Override

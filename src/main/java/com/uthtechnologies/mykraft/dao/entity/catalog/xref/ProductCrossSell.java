@@ -11,7 +11,7 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao.entity.catalog;
+package com.uthtechnologies.mykraft.dao.entity.catalog.xref;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,12 +22,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductCategory;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
+
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "WMK_PRODUCT_UP_SELL")
-public class ProductUpSell {
+@Table(name = "WMK_PRODUCT_CROSS_SELL")
+public class ProductCrossSell {
 
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
@@ -37,13 +40,14 @@ public class ProductUpSell {
   private int sequence;
   @OneToOne
   @JoinColumn(name = "CATG_ID", referencedColumnName = "ID")
-  private Category category;
+  private ProductCategory category;
   @OneToOne
   @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
-  private VendorProduct product;
+  private Product product;
   @OneToOne
   @JoinColumn(name = "XREF_PROD_ID", referencedColumnName = "ID")
-  private VendorProduct relatedProduct;
+  private Product relatedProduct;
+  
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -52,7 +56,7 @@ public class ProductUpSell {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    ProductUpSell other = (ProductUpSell) obj;
+    ProductCrossSell other = (ProductCrossSell) obj;
     if (id == null) {
       //if (other.id != null)
         return false;

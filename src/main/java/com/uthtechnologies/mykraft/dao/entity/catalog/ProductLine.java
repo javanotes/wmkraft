@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
 import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
 
 import lombok.Data;
@@ -45,11 +46,11 @@ public class ProductLine implements Comparable<ProductLine>{
   private Long id;
   @ManyToOne
   @JoinColumn(name = "CATG_ID", referencedColumnName = "ID")
-  private Category category;
+  private ProductCategory category;
   
-  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-  @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "product", orphanRemoval = true)
   private Set<ProductLineSpecification> specs = new HashSet<>();
+  
   public ProductLineSpecification newProductSpecification()
   {
     ProductLineSpecification ps = new ProductLineSpecification();
@@ -58,23 +59,21 @@ public class ProductLine implements Comparable<ProductLine>{
     return ps;
   }
   
-  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-  @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")  
-  private Set<VendorProduct> products = new HashSet<>();
-  public VendorProduct newVendorProduct()
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "productLine", orphanRemoval = true)
+  private Set<Product> products = new HashSet<>();
+  public Product newVendorProduct()
   {
-    VendorProduct vp = new VendorProduct();
+    Product vp = new Product();
     vp.setProductLine(this);
     getProducts().add(vp);
     return vp;
   }
   
-  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-  @JoinColumn(name = "PROD_TYP_ID", referencedColumnName = "PROD_TYP_ID")
-  private Set<ProductTag> tags = new HashSet<>();
-  public ProductTag newProductTag()
+  @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, mappedBy = "product", orphanRemoval = true)
+  private Set<ProductLineTag> tags = new HashSet<>();
+  public ProductLineTag newProductTag()
   {
-    ProductTag pt = new ProductTag();
+    ProductLineTag pt = new ProductLineTag();
     pt.setProduct(this);
     getTags().add(pt);
     return pt;

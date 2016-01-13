@@ -11,7 +11,7 @@
 *
 * ============================================================================
 */
-package com.uthtechnologies.mykraft.dao.entity.catalog;
+package com.uthtechnologies.mykraft.dao.entity.catalog.xref;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;

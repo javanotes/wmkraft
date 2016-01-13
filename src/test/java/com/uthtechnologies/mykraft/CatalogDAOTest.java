@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,32 +27,32 @@ import com.uthtechnologies.mykraft.dao.CategoryRepo;
 import com.uthtechnologies.mykraft.dao.ProductLineRepo;
 import com.uthtechnologies.mykraft.dao.UserRepo;
 import com.uthtechnologies.mykraft.dao.entity.auth.User;
-import com.uthtechnologies.mykraft.dao.entity.catalog.Category;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductCategory;
 import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLine;
 import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineSpecification;
-import com.uthtechnologies.mykraft.dao.entity.catalog.ProductTag;
-import com.uthtechnologies.mykraft.dao.entity.catalog.VendorProduct;
-import com.uthtechnologies.mykraft.dao.entity.catalog.VendorProductSpecification;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineTag;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSKU;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSpecification;
 import com.uthtechnologies.mykraft.dao.entity.util.DescriptionSupport;
 import com.uthtechnologies.mykraft.dao.entity.util.ProductCostingSupport;
 import com.uthtechnologies.mykraft.dao.entity.util.ProductDimensionSupport;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Bootstrap.class)
+@SpringApplicationConfiguration(classes = XCommServer.class)
 @WebAppConfiguration
 public class CatalogDAOTest {
 
-  private Category catg;
+  private ProductCategory catg;
   private ProductLine prodLine;
   
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Test
-  @Rollback(false)
   public void testCreateMultiProductCatalog()
   {
     try 
     {
-      catg = new Category();
+      catg = new ProductCategory();
       catg.setCategory("PURSE");
       catg.setDescript(new DescriptionSupport("Wallets & Purses", "All items for wallets and purses"));
       catg = catgRepo.saveAndFlush(catg);
@@ -82,7 +81,7 @@ public class CatalogDAOTest {
       Assert.assertEquals(3, prodLine.getSpecs().size());
       Assert.assertNotNull("ProductLineSpecification entity was not merged", prodLine.getSpecs().iterator().next().getId());
       
-      ProductTag pt = prodLine.newProductTag();
+      ProductLineTag pt = prodLine.newProductTag();
       pt.setTag("wallet");
       pt = prodLine.newProductTag();
       pt.setTag("purse");
@@ -93,7 +92,7 @@ public class CatalogDAOTest {
       Assert.assertNotNull("ProductTag entity was not merged", prodLine.getTags().iterator().next().getId());
       User u = userRepo.findByUserName("admin");
       
-      VendorProduct vp = prodLine.newVendorProduct();
+      Product vp = prodLine.newVendorProduct();
       vp.setActive(true);
       vp.setProdDispOrder(1);
       vp.setVendor(u);
@@ -102,7 +101,7 @@ public class CatalogDAOTest {
       Assert.assertFalse(prodLine.getSpecs().isEmpty());
       for(ProductLineSpecification plSpec : prodLine.getSpecs())
       {
-        VendorProductSpecification vSpec = vp.newSpecification(plSpec);
+        ProductSpecification vSpec = vp.newSpecification(plSpec);
         switch (plSpec.getSpecCode()) {
         case "FORM":
           vSpec.setDescript("The form factor spec is defined here");
@@ -121,8 +120,9 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Camel purse", "Camel hair made Jaipur purse"));
-      vp.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
-      vp.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
+      ProductSKU sku = vp.newSKU("Size", "XXL");
+      sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
+      sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
       
       Assert.assertEquals(1, prodLine.getProducts().size());
@@ -137,7 +137,7 @@ public class CatalogDAOTest {
       Assert.assertFalse(prodLine.getSpecs().isEmpty());
       for(ProductLineSpecification plSpec : prodLine.getSpecs())
       {
-        VendorProductSpecification vSpec = vp.newSpecification(plSpec);
+        ProductSpecification vSpec = vp.newSpecification(plSpec);
         switch (plSpec.getSpecCode()) {
         case "FORM":
           vSpec.setDescript("The form factor spec is defined here");
@@ -156,8 +156,9 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Bull purse", "Bull tail hair made Jaipur purse"));
-      vp.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
-      vp.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
+      sku = vp.newSKU("Size", "XXL");
+      sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
+      sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
       
       
@@ -207,7 +208,7 @@ public class CatalogDAOTest {
       Assert.assertFalse(prodLine.getSpecs().isEmpty());
       for(ProductLineSpecification plSpec : prodLine.getSpecs())
       {
-        VendorProductSpecification vSpec = vp.newSpecification(plSpec);
+        ProductSpecification vSpec = vp.newSpecification(plSpec);
         switch (plSpec.getSpecCode()) {
         case "COLOR":
           vSpec.setDescript("The form factor spec is defined here");
@@ -226,8 +227,9 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Camel pouch", "Camel hair made Jaisalmer pouch. Gold colored"));
-      vp.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
-      vp.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
+      sku = vp.newSKU("Size", "XXL");
+      sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
+      sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
       
       Assert.assertEquals(1, prodLine.getProducts().size());
@@ -242,7 +244,7 @@ public class CatalogDAOTest {
       Assert.assertFalse(prodLine.getSpecs().isEmpty());
       for(ProductLineSpecification plSpec : prodLine.getSpecs())
       {
-        VendorProductSpecification vSpec = vp.newSpecification(plSpec);
+        ProductSpecification vSpec = vp.newSpecification(plSpec);
         switch (plSpec.getSpecCode()) {
         case "COLOR":
           vSpec.setDescript("The form factor spec is defined here");
@@ -261,8 +263,9 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Bull pouch", "Bull tail hair made Jaisalmer pouch. Black colored"));
-      vp.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
-      vp.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
+      sku = vp.newSKU("Size", "XXL");
+      sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
+      sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
       
     } catch (Exception e) {
@@ -273,12 +276,11 @@ public class CatalogDAOTest {
   
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Test
-  @Rollback(false)
   public void testCreateSingleProductCatalog()
   {
     try 
     {
-      catg = new Category();
+      catg = new ProductCategory();
       catg.setCategory("category");
       catg.setDescript(new DescriptionSupport("Sole category", "This is the only category in the universe"));
       catg = catgRepo.saveAndFlush(catg);
@@ -307,7 +309,7 @@ public class CatalogDAOTest {
       Assert.assertEquals(3, prodLine.getSpecs().size());
       Assert.assertNotNull("ProductLineSpecification entity was not merged", prodLine.getSpecs().iterator().next().getId());
       
-      ProductTag pt = prodLine.newProductTag();
+      ProductLineTag pt = prodLine.newProductTag();
       pt.setTag("tag1");
       pt = prodLine.newProductTag();
       pt.setTag("tag2");
@@ -318,7 +320,7 @@ public class CatalogDAOTest {
       Assert.assertNotNull("ProductTag entity was not merged", prodLine.getTags().iterator().next().getId());
       User u = userRepo.findByUserName("admin");
       
-      VendorProduct vp = prodLine.newVendorProduct();
+      Product vp = prodLine.newVendorProduct();
       vp.setActive(true);
       vp.setProdDispOrder(1);
       vp.setVendorProdLabel("Camel Purse A111");
@@ -327,7 +329,7 @@ public class CatalogDAOTest {
       Assert.assertFalse(prodLine.getSpecs().isEmpty());
       for(ProductLineSpecification plSpec : prodLine.getSpecs())
       {
-        VendorProductSpecification vSpec = vp.newSpecification(plSpec);
+        ProductSpecification vSpec = vp.newSpecification(plSpec);
         switch (plSpec.getSpecCode()) {
         case "FORM":
           vSpec.setDescript("The form factor spec is defined here");
@@ -346,8 +348,9 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Product Description", "This is an actual vendor product detailed description"));
-      vp.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
-      vp.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
+      ProductSKU sku = vp.newSKU("Size", "XXL");
+      sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
+      sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
       
       Assert.assertEquals(1, prodLine.getProducts().size());

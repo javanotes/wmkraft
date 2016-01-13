@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: VendorProductSpecs.java
+* FILE: ProductTag.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -13,43 +13,29 @@
 */
 package com.uthtechnologies.mykraft.dao.entity.catalog;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_VENDOR_PRODUCT_SPECS", indexes = {
-    @Index(name = "idx_VENDOR_PRODUCT_SPEC", columnList = "PROD_ID, SPEC_ID", unique = true)})
-public class VendorProductSpecification {
-  
-  VendorProductSpecification() {
-    super();
-  }
-  public VendorProductSpecification(ProductLineSpecification spec) {
-    super();
-    this.spec = spec;
-  }
+@Table(name = "WMK_PRODUCT_LINE_TAGS", indexes = {
+    @Index(name = "idx_WMK_ORDER_FULFILLMENT", columnList = "PROD_TYP_ID, TAG", unique = true)})
+public class ProductLineTag {
+
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   @ManyToOne
-  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
-  private VendorProduct product;
-  @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "SPEC_ID", referencedColumnName = "ID")
-  private ProductLineSpecification spec;
-  @Column(name = "SPEC_DETL", columnDefinition = "MEDIUMTEXT")
-  private String descript;
+  @JoinColumn(name = "PROD_TYP_ID", referencedColumnName= "PROD_TYP_ID")
+  private ProductLine product;
+  private String tag;
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -58,7 +44,7 @@ public class VendorProductSpecification {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    VendorProductSpecification other = (VendorProductSpecification) obj;
+    ProductLineTag other = (ProductLineTag) obj;
     if (id == null) {
       //if (other.id != null)
         return false;
@@ -66,6 +52,7 @@ public class VendorProductSpecification {
       return false;
     return true;
   }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -73,5 +60,4 @@ public class VendorProductSpecification {
     result = prime * result + ((id == null) ? super.hashCode() : id.hashCode());
     return result;
   }
-  
 }

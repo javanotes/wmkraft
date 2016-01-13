@@ -21,7 +21,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
-import com.uthtechnologies.mykraft.dao.entity.catalog.VendorProduct;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
 /**
  * @deprecated - Using DB trigger to generate product code
  */
@@ -55,7 +55,7 @@ public class ProductIdGenerator extends SequenceStyleGenerator {
    * @param maxNumLen
    * @return
    */
-  public String getNextId(VendorProduct pb, int maxNumLen)
+  public String getNextId(Product pb, int maxNumLen)
   {
     
     StringBuilder s = new StringBuilder();
@@ -68,14 +68,14 @@ public class ProductIdGenerator extends SequenceStyleGenerator {
     s.append(StringUtils.leftPad(StringUtils.right(String.valueOf(id.incrementAndGet()), maxNumLen), maxNumLen, '0'));
     return s.toString();
   }
-  private static String abbreviateMiddle(String userName) {
+  public static String abbreviateMiddle(String userName) {
     return StringUtils.substring(userName, 0, 2) + StringUtils.right(userName, 2);
   }
   public Serializable generate(SessionImplementor session, Object object) throws HibernateException
   {
-    if(object instanceof VendorProduct)
+    if(object instanceof Product)
     {
-      return getNextId((VendorProduct) object, 12);
+      return getNextId((Product) object, 12);
         
     }
     return super.generate(session, object);

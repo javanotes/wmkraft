@@ -16,15 +16,15 @@ package com.uthtechnologies.mykraft.service;
 import java.util.List;
 import java.util.Map;
 
-import com.uthtechnologies.mykraft.dao.entity.catalog.Category;
+import com.uthtechnologies.mykraft.dao.entity.catalog.ProductCategory;
 import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLine;
-import com.uthtechnologies.mykraft.dao.entity.catalog.VendorProduct;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
 
 public interface CatalogService {
 
-  List<Category> findAllCategories();
-  List<ProductLine> findProductLinesForCategory(Category c);
-  List<VendorProduct> findVendorProductsForCategory(Category c);
-  List<VendorProduct> findVendorProductsForProductLine(ProductLine p);
-  Map<Category, List<VendorProduct>> findVendorProductsByTags(List<String> tags);
+  List<ProductCategory> findAllCategories();
+  List<ProductLine> findProductLinesForCategory(ProductCategory c);
+  List<Product> findVendorProductsForCategory(ProductCategory c);
+  List<Product> findVendorProductsForProductLine(ProductLine p);
+  Map<ProductCategory, List<Product>> findVendorProductsByTags(List<String> tags);
 }

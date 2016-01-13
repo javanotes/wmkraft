@@ -50,6 +50,6 @@ public class ApprovalWorkflow {
   @JoinColumn(name = "REQ_BY", referencedColumnName = "LOGIN_ID")
   private User requestedBy;
   
-  @OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "workflow", fetch = FetchType.LAZY, orphanRemoval = true)
   private Set<ApprovalWorkflowTrail> trails = new TreeSet<>();
 }
