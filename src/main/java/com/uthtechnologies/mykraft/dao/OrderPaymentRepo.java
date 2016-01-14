@@ -1,6 +1,6 @@
 /* ============================================================================
 *
-* FILE: CategoryRepository.java
+* FILE: OrderPaymentRepo.java
 *
 * MODULE DESCRIPTION:
 * See class description
@@ -14,10 +14,9 @@
 package com.uthtechnologies.mykraft.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import com.uthtechnologies.mykraft.dao.entity.catalog.ProductCategory;
-@Repository
-public interface CategoryRepo extends JpaRepository<ProductCategory, Integer> {
+import com.uthtechnologies.mykraft.dao.entity.order.OrderPayment;
+
+public interface OrderPaymentRepo extends JpaRepository<OrderPayment, Long> {
 
 }

@@ -22,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
@@ -32,7 +33,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_VENDOR_PRODUCT_SKU", indexes = {
+@Table(name = "WMK_PRODUCT_SKU_MASTER", indexes = {
     @Index(name = "idx_WMK_VENDOR_PRODUCT_sku", columnList = "PROD_ID, SKU_TYPE, SKU_ATTR", unique = true)})
 public class ProductSKU{
 
@@ -77,7 +78,9 @@ public class ProductSKU{
   private String skuCode;
   @Column(name = "SKU_ATTR", nullable = false)
   private String skuAttrib;
-    
+  @OneToOne(mappedBy = "product")  
+  private ProductStock stock;
+  
   private Boolean active = true;
   
   @Column(name = "SKU_DISP_ORDER")

@@ -1,6 +1,6 @@
 DELIMITER $$
 create trigger generate_prod_code 
-before insert on wmk_vendor_product for each row
+before insert on wmk_product_master for each row
 begin
 	declare prod_line_typ varchar(255);
     declare prod_label_typ varchar(255);

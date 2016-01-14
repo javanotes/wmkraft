@@ -23,7 +23,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.uthtechnologies.mykraft.dao.CategoryRepo;
+import com.uthtechnologies.mykraft.dao.ProductCategoryRepo;
 import com.uthtechnologies.mykraft.dao.ProductLineRepo;
 import com.uthtechnologies.mykraft.dao.UserRepo;
 import com.uthtechnologies.mykraft.dao.entity.auth.User;
@@ -375,7 +375,7 @@ public class CatalogDAOTest {
     }
   }
   @Autowired
-  private CategoryRepo catgRepo;
+  private ProductCategoryRepo catgRepo;
   @Autowired
   private ProductLineRepo prodLineRepo;
   @Autowired

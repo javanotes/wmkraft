@@ -19,16 +19,56 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.FieldCallback;
 import org.springframework.util.ReflectionUtils.FieldFilter;
+import org.springframework.util.StringUtils;
 
+import lombok.extern.slf4j.Slf4j;
+@Component
+@Slf4j
 public class AssociationHelper {
-  private AssociationHelper(){}
-  public static void removeOneToManyAssociations(final Object entity)
+  
+  @SuppressWarnings({ "unchecked", "unused" })
+  private void updateEntity(Object entity)
+  {
+    //this is convention over configuration
+    String repoClass = "com.uthtechnologies.mykraft.dao."+entity.getClass().getSimpleName()+"Repo";
+    try 
+    {
+      JpaRepository<Object, ?> jpaRepo = (JpaRepository<Object, ?>) ctx.getBean(Class.forName(repoClass));
+      jpaRepo.saveAndFlush(entity);
+      log.debug("Entity saved "+entity);
+    } 
+    catch (ClassNotFoundException e) {
+      log.error("Repository implementation not found. Expected class ["+repoClass+"]", e);
+    }
+    catch(BeansException b)
+    {
+      log.error("Repository Bean not configured. Expected type ["+repoClass+"]", b);
+    }
+    catch(Exception b)
+    {
+      log.error("Error while trying to update a child entity of type- "+entity.getClass(), b);
+    }
+    
+  }
+  @Autowired
+  private ApplicationContext ctx;
+  /**
+   * Removes OneToMany and OneToOne foreign key bi-directional dependencies
+   * @param entity
+   */
+  public void removeForeignKeyAssociations(final Object entity)
   {
     ReflectionUtils.doWithFields(entity.getClass(), new FieldCallback() {
       
@@ -38,22 +78,48 @@ public class AssociationHelper {
         if(Collection.class.isAssignableFrom(field.getType()))
         {
           Collection<?> c = (Collection<?>) FieldUtils.readField(field, entity, true);
-          OneToMany otm = field.getAnnotation(OneToMany.class);
-          for(Iterator<?> iter = c.iterator(); iter.hasNext();)
+          
+          if (field.isAnnotationPresent(OneToMany.class)) 
           {
-            Object child = iter.next();
-            removeOneToManyAssociations(child);
-            String mb = otm.mappedBy();
+            OneToMany otm = field.getAnnotation(OneToMany.class);
+            for (Iterator<?> iter = c.iterator(); iter.hasNext();) {
+              Object child = iter.next();
+              removeForeignKeyAssociations(child);
+              String mb = otm.mappedBy();
+              char c0 = Character.toUpperCase(mb.charAt(0));
+              mb = c0 + mb.substring(1);
+              try {
+                //set null
+                MethodUtils.invokeExactMethod(child, "set" + mb,
+                    new Object[] { null }, new Class[] { entity.getClass() });
+                iter.remove();
+                
+              } catch (NoSuchMethodException | InvocationTargetException e) {
+                log.warn("Unable to set null parent association", e);
+              }
+            } 
+          }
+          
+        }
+        else
+        {
+          //OneToOne
+          if(field.isAnnotationPresent(OneToOne.class))
+          {
+            Object child = FieldUtils.readField(field, entity, true);
+            removeForeignKeyAssociations(child);
+            String mb = field.getAnnotation(OneToOne.class).mappedBy();
             char c0 = Character.toUpperCase(mb.charAt(0));
             mb = c0 + mb.substring(1);
-            try 
-            {
+            try {
               //set null
-              MethodUtils.invokeExactMethod(child, "set"+mb, new Object[]{null}, new Class[]{entity.getClass()});
-              iter.remove();
-              //System.out.println("Removed..."+child);
+              MethodUtils.invokeExactMethod(child, "set" + mb,
+                  new Object[] { null }, new Class[] { entity.getClass() });
+              FieldUtils.writeField(field, entity, null, true);
+              
+
             } catch (NoSuchMethodException | InvocationTargetException e) {
-              e.printStackTrace();
+              log.warn("Unable to set null parent association", e);
             }
           }
         }
@@ -63,7 +129,9 @@ public class AssociationHelper {
       
       @Override
       public boolean matches(Field field) {
-        return field.isAnnotationPresent(OneToMany.class);
+        return field.isAnnotationPresent(OneToMany.class)
+            || (field.isAnnotationPresent(OneToOne.class) && StringUtils
+                .hasText(field.getAnnotation(OneToOne.class).mappedBy()));
       }
     });
   }

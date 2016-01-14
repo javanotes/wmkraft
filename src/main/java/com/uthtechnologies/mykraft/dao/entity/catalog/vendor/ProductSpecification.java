@@ -31,7 +31,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_VENDOR_PRODUCT_SPECS", indexes = {
+@Table(name = "WMK_PRODUCT_SPECS", indexes = {
     @Index(name = "idx_VENDOR_PRODUCT_SPEC", columnList = "PROD_ID, SPEC_ID", unique = true)})
 public class ProductSpecification {
   

@@ -29,7 +29,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "WMK_PRODUCTLINE_SPECS", indexes = {
+@Table(name = "WMK_PRODUCT_LINE_SPECS", indexes = {
     @Index(name = "idx_VENDOR_PRODUCT_SPEC", columnList = "PROD_TYP_ID, CODE", unique = true)})
 public class ProductLineSpecification{
 

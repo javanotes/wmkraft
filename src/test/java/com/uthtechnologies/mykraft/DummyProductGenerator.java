@@ -13,7 +13,6 @@
 */
 package com.uthtechnologies.mykraft;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -27,11 +26,10 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.uthtechnologies.mykraft.dao.CategoryRepo;
+import com.uthtechnologies.mykraft.dao.ProductCategoryRepo;
 import com.uthtechnologies.mykraft.dao.ProductLineRepo;
 import com.uthtechnologies.mykraft.dao.ProductRepo;
 import com.uthtechnologies.mykraft.dao.ProductStockRepo;
@@ -57,7 +55,7 @@ import com.uthtechnologies.mykraft.dao.entity.util.ProductDimensionSupport;
 public class DummyProductGenerator {
   
   @Autowired
-  private CategoryRepo catgRepo;
+  private ProductCategoryRepo catgRepo;
   @Autowired
   private ProductLineRepo prodLineRepo;
   @Autowired
@@ -66,18 +64,16 @@ public class DummyProductGenerator {
   private ProductCategory catg;
   private ProductLine prodLine;
   
-  final int catgN = 10, prodLineN = 10, prodN = 10;
-  
-  @Autowired
-  private PlatformTransactionManager txnMgr;
+  final int catgN = 1, prodLineN = 1, prodN = 1;
+    
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   @Test
   public void testCreateSingleUserProductCatalog()
   {
     try 
     {
-      //TransactionStatus txn = txnMgr.getTransaction(new DefaultTransactionDefinition());
-      
+      clear();
+            
       User u = userRepo.findByUserName("admin");
       
       for(int i=0; i<catgN; i++)
@@ -147,7 +143,10 @@ public class DummyProductGenerator {
             }
             
             vp.setDescript(new DescriptionSupport(vp.getVendorProdLabel() + " Description", "This is an actual vendor product detailed description for the product"));
+            
             vp = prodRepo.saveAndFlush(vp);
+            vp = prodRepo.findOne(vp.getId());
+            em.refresh(vp);
             
             ProductSKU sku = vp.newSKU("Size", "M");
             sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
@@ -171,11 +170,12 @@ public class DummyProductGenerator {
               stk.setQtyInStock(100);
               prodStkRepo.save(stk);
             }
-            
+                        
           }
           
           //txnMgr.commit(txn);
           em.flush();
+          em.clear();
           System.err.println("-- Flushed transaction --");
           
         }
@@ -194,8 +194,10 @@ public class DummyProductGenerator {
   private ProductRepo prodRepo;
   @Autowired
   private ProductStockRepo prodStkRepo;
+  @Autowired
+  private AssociationHelper assocHelper;
+  
   @Before
-  //@Transactional
   public void clear()
   {
     List<ProductCategory> c = catgRepo.findAll();
@@ -203,7 +205,8 @@ public class DummyProductGenerator {
     {
       for(ProductCategory pc : c)
       {
-        AssociationHelper.removeOneToManyAssociations(pc);
+        assocHelper.removeForeignKeyAssociations(pc);
+        pc = catgRepo.saveAndFlush(pc);
         catgRepo.delete(pc);
       }
     }

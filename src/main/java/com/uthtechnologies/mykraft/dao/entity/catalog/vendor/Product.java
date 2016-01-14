@@ -47,7 +47,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_VENDOR_PRODUCT", indexes = {
+@Table(name = "WMK_PRODUCT_MASTER", indexes = {
     @Index(name = "idx_WMK_VENDOR_PRODUCT", columnList = "PROD_TYP_ID, VEND_ID, PROD_LABEL", unique = true)})
 public class Product implements Comparable<Product>{
 
@@ -113,7 +113,13 @@ public class Product implements Comparable<Product>{
     .putString(getVendorProdCode(), StandardCharsets.UTF_8)
     .putString(sku.getSkuCode(), StandardCharsets.UTF_8)
     .putString(sku.getSkuAttrib(), StandardCharsets.UTF_8).hash();
-    sku.setSkuID(StringUtils.leftPad(String.valueOf(h.asLong()), 20, '0'));
+    
+    StringBuilder s = new StringBuilder()
+        .append(StringUtils.rightPad(StringUtils.left(sku.getSkuCode(), 3).toUpperCase(), 3, 'X'))
+        .append(StringUtils.rightPad(StringUtils.left(sku.getSkuAttrib(), 2).toUpperCase(), 2, 'X'))
+        .append(StringUtils.leftPad(StringUtils.right(String.valueOf(Math.abs(h.asLong())), 12), 12, '0'));
+    
+    sku.setSkuID(s.toString());
     getSku().add(sku);
     return sku;
   }

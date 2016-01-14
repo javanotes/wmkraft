@@ -20,7 +20,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineSpecification;
 
-public interface ProductLineSpecRepo
+public interface ProductLineSpecificationRepo
     extends JpaRepository<ProductLineSpecification, Long> {
 
   @Query("select u from ProductLineSpecification u where u.product.id = ?1")
