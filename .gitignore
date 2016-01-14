@@ -1,4 +1,6 @@
 bin/
+.gradle/
+.settings/
 *.class
 
 # Mobile Tools for Java (J2ME)
