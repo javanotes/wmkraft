@@ -41,6 +41,7 @@ import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineSpecification;
 import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineTag;
 import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
 import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSKU;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSKUClass;
 import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSpecification;
 import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductStock;
 import com.uthtechnologies.mykraft.dao.entity.util.AssociationHelper;
@@ -148,15 +149,15 @@ public class DummyProductGenerator {
             vp = prodRepo.findOne(vp.getId());
             em.refresh(vp);
             
-            ProductSKU sku = vp.newSKU("Size", "M");
+            ProductSKUClass sku = vp.newSKUClass("Size", "M");
             sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
             sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
             
-            sku = vp.newSKU("Size", "L");
+            sku = vp.newSKUClass("Size", "L");
             sku.setDimension(new ProductDimensionSupport(4.0, 1.75, 0.85, 350.0));
             sku.setCosting(new ProductCostingSupport(12.5, 1500.00, 55.0, 115.5));
             
-            sku = vp.newSKU("Size", "S");
+            sku = vp.newSKUClass("Size", "S");
             sku.setDimension(new ProductDimensionSupport(3.0, 0.75, 0.5, 150.0));
             sku.setCosting(new ProductCostingSupport(12.5, 500.00, 55.0, 100.0));
             
@@ -165,10 +166,14 @@ public class DummyProductGenerator {
             
             for(ProductSKU s : vp.getSku())
             {
-              ProductStock stk = new ProductStock();
-              stk.setProduct(s);
-              stk.setQtyInStock(100);
-              prodStkRepo.save(stk);
+              for(ProductSKUClass c : s.getAttribs())
+              {
+                ProductStock stk = new ProductStock();
+                stk.setProduct(c);
+                stk.setQtyInStock(100);
+                prodStkRepo.save(stk);
+              }
+              
             }
                         
           }

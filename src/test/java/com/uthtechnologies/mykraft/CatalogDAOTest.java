@@ -32,7 +32,7 @@ import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLine;
 import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineSpecification;
 import com.uthtechnologies.mykraft.dao.entity.catalog.ProductLineTag;
 import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.Product;
-import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSKU;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSKUClass;
 import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSpecification;
 import com.uthtechnologies.mykraft.dao.entity.util.DescriptionSupport;
 import com.uthtechnologies.mykraft.dao.entity.util.ProductCostingSupport;
@@ -120,7 +120,7 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Camel purse", "Camel hair made Jaipur purse"));
-      ProductSKU sku = vp.newSKU("Size", "XXL");
+      ProductSKUClass sku = vp.newSKUClass("Size", "XXL");
       sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
       sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
@@ -156,7 +156,7 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Bull purse", "Bull tail hair made Jaipur purse"));
-      sku = vp.newSKU("Size", "XXL");
+      sku = vp.newSKUClass("Size", "XXL");
       sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
       sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
@@ -227,7 +227,7 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Camel pouch", "Camel hair made Jaisalmer pouch. Gold colored"));
-      sku = vp.newSKU("Size", "XXL");
+      sku = vp.newSKUClass("Size", "XXL");
       sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
       sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
@@ -263,7 +263,7 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Bull pouch", "Bull tail hair made Jaisalmer pouch. Black colored"));
-      sku = vp.newSKU("Size", "XXL");
+      sku = vp.newSKUClass("Size", "XXL");
       sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
       sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);
@@ -348,7 +348,7 @@ public class CatalogDAOTest {
       }
       
       vp.setDescript(new DescriptionSupport("Product Description", "This is an actual vendor product detailed description"));
-      ProductSKU sku = vp.newSKU("Size", "XXL");
+      ProductSKUClass sku = vp.newSKUClass("Size", "XXL");
       sku.setDimension(new ProductDimensionSupport(3.5, 1.5, 0.8, 250.0));
       sku.setCosting(new ProductCostingSupport(12.5, 1000.00, 55.0, 105.5));
       prodLine = prodLineRepo.saveAndFlush(prodLine);

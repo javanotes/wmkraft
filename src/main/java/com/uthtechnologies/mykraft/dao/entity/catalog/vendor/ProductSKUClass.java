@@ -13,10 +13,6 @@
 */
 package com.uthtechnologies.mykraft.dao.entity.catalog.vendor;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,20 +22,22 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
+import com.uthtechnologies.mykraft.dao.entity.util.ProductCostingSupport;
+import com.uthtechnologies.mykraft.dao.entity.util.ProductDimensionSupport;
 
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "WMK_PRODUCT_SKU", indexes = {
-    @Index(name = "idx_WMK_VENDOR_PRODUCT_sku", columnList = "PROD_ID, SKU_TYPE", unique = true)})
-public class ProductSKU{
+@Table(name = "WMK_PRODUCT_SKU_CLASS", indexes = {
+    @Index(name = "idx_WMK_VENDOR_PRODUCT_sku", columnList = "SKU_TYP_ID, SKU_ATTR", unique = true)})
+public class ProductSKUClass{
 
-  public ProductSKU()
+  public ProductSKUClass()
   {
     
   }
@@ -52,7 +50,7 @@ public class ProductSKU{
       return false;
     if (getClass() != obj.getClass())
       return false;
-    ProductSKU other = (ProductSKU) obj;
+    ProductSKUClass other = (ProductSKUClass) obj;
     if (id == null) {
       //if (other.id != null)
         return false;
@@ -72,23 +70,22 @@ public class ProductSKU{
   @Id@GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "PROD_ID", referencedColumnName = "ID")
-  private Product product;
+  @JoinColumn(name = "SKU_TYP_ID", referencedColumnName = "ID")
+  private ProductSKU skuType;
+  @Column(name = "SKU_CODE", unique = true, length = 20)
+  private String skuCode;
+  @Column(name = "SKU_ATTR", nullable = false)
+  private String skuAttrib;
+  @OneToOne(mappedBy = "product")  
+  private ProductStock stock;
   
-  @Column(name = "SKU_TYPE", nullable = false)
-  private String skuType;
+  private Boolean active = true;
   
-  @OneToMany(mappedBy = "skuType", cascade = {CascadeType.ALL})
-  private Set<ProductSKUClass> attribs = new HashSet<>();
+  @Column(name = "SKU_DISP_ORDER")
+  private Integer skuDispOrder;
   
-  public ProductSKUClass newSKUClass(String attrib)
-  {
-    ProductSKUClass c = new ProductSKUClass();
-    c.setSkuType(this);
-    c.setSkuAttrib(attrib);
-    getAttribs().add(c);
-    return c;
-  }
+  private ProductDimensionSupport dimension;
+  private ProductCostingSupport costing;
   
   private AuditSupport audit;
   

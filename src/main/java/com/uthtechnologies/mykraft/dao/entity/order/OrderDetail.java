@@ -30,7 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSKU;
+import com.uthtechnologies.mykraft.dao.entity.catalog.vendor.ProductSKUClass;
 import com.uthtechnologies.mykraft.dao.entity.util.AuditSupport;
 import com.uthtechnologies.mykraft.dao.entity.util.ProductPricingSupport;
 
@@ -75,7 +75,7 @@ public class OrderDetail {
    * @param product
    * @param quantity
    */
-  public OrderDetail(ProductSKU product, Integer quantity)
+  public OrderDetail(ProductSKUClass product, Integer quantity)
   {
     this.product = product;
     this.quantity = quantity;
@@ -90,7 +90,7 @@ public class OrderDetail {
   
   @OneToOne
   @JoinColumn(name = "PROD_SKU_ID", referencedColumnName = "ID")
-  private ProductSKU product;
+  private ProductSKUClass product;
   
   @Column(name = "QTY")
   private Integer quantity = 0;

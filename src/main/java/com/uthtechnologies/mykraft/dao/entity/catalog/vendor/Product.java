@@ -14,7 +14,10 @@
 package com.uthtechnologies.mykraft.dao.entity.catalog.vendor;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -29,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -98,30 +102,40 @@ public class Product implements Comparable<Product>{
   
   @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy = "product", orphanRemoval = true)  
   private Set<ProductSKU> sku = new HashSet<>();
+  
+  @Transient
+  private Map<String, ProductSKU> skuMap = Collections.synchronizedMap(new HashMap<String, ProductSKU>());
   /**
    * New product sku type
    * @return
    */
-  public ProductSKU newSKU(String code, String attrib)
+  public ProductSKUClass newSKUClass(String code, String attrib)
   {
-    ProductSKU sku = new ProductSKU();
-    sku.setProduct(this);
-    sku.setSkuCode(code);
-    sku.setSkuAttrib(attrib);
+    if(!skuMap.containsKey(code))
+    {
+      ProductSKU sku = new ProductSKU();
+      sku.setProduct(this);
+      sku.setSkuType(code);
+      skuMap.put(code, sku);
+      getSku().add(sku);
+    }
     
+    ProductSKU sku = skuMap.get(code);
+    ProductSKUClass skuc = sku.newSKUClass(attrib);
+        
     HashCode h = Hashing.md5().newHasher()
     .putString(getVendorProdCode(), StandardCharsets.UTF_8)
-    .putString(sku.getSkuCode(), StandardCharsets.UTF_8)
-    .putString(sku.getSkuAttrib(), StandardCharsets.UTF_8).hash();
+    .putString(sku.getSkuType(), StandardCharsets.UTF_8)
+    .putString(skuc.getSkuAttrib(), StandardCharsets.UTF_8).hash();
     
     StringBuilder s = new StringBuilder()
-        .append(StringUtils.rightPad(StringUtils.left(sku.getSkuCode(), 3).toUpperCase(), 3, 'X'))
-        .append(StringUtils.rightPad(StringUtils.left(sku.getSkuAttrib(), 2).toUpperCase(), 2, 'X'))
+        .append(StringUtils.rightPad(StringUtils.left(sku.getSkuType(), 3).toUpperCase(), 3, 'X'))
+        .append(StringUtils.rightPad(StringUtils.left(skuc.getSkuAttrib(), 2).toUpperCase(), 2, 'X'))
         .append(StringUtils.leftPad(StringUtils.right(String.valueOf(Math.abs(h.asLong())), 12), 12, '0'));
     
-    sku.setSkuID(s.toString());
-    getSku().add(sku);
-    return sku;
+    skuc.setSkuCode(s.toString());
+        
+    return skuc;
   }
   
   @Column(name = "PROD_DISP_ORDER")

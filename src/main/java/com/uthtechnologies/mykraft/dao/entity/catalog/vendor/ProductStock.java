@@ -38,7 +38,7 @@ public class ProductStock {
   private Long id;
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "PROD_SKU_ID", referencedColumnName = "ID", unique = true)
-  private ProductSKU product;
+  private ProductSKUClass product;
   
   @Column(name = "QTY_IN_STOCK")
   private Integer qtyInStock;
